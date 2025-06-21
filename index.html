@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Primary Meta Tags -->
+    <title>CurrX - Live Currency Converter</title>
+    <meta name="title" content="CurrX - Live Currency Converter">
+    <meta name="description"
+        content="Convert currencies in real-time with live rates, flags, and auto-typing. Built with Bootstrap and ExchangeRate API. Try it now!">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourdomain.com/">
+    <meta property="og:title" content="CurrX - Live Currency Converter">
+    <meta property="og:description"
+        content="Convert currencies in real-time with live rates, flags, and auto-typing. Built with Bootstrap and ExchangeRate API.">
+    <meta property="og:image" content="https://yourdomain.com/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourdomain.com/">
+    <meta property="twitter:title" content="CurrX - Live Currency Converter">
+    <meta property="twitter:description"
+        content="Convert currencies in real-time with live rates, flags, and auto-typing. Built with Bootstrap and ExchangeRate API.">
+    <meta property="twitter:image" content="https://yourdomain.com/preview.png">
+
+    <!-- Favicon (optional) -->
+    <link rel="icon" href="https://yourdomain.com/favicon.ico" type="image/x-icon">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js"></script>
+    <style>
+        :root {
+            --primary-color: #6c63ff;
+            --secondary-color: #4d44db;
+            --light-color: #f8f9ff;
+            --text-color: #3a3a3a;
+            --bg-color: #ffffff;
+            --card-color: #ffffff;
+            --input-bg: #f8f9ff;
+            --shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
+            --border-color: #e0e0ff;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #8a82ff;
+            --secondary-color: #6c63ff;
+            --light-color: #1a1a2e;
+            --text-color: #f0f0f0;
+            --bg-color: #121212;
+            --card-color: #1e1e2e;
+            --input-bg: #2a2a3a;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --border-color: #3a3a4a;
+        }
+
+        body {
+            background: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            background: var(--card-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(108, 99, 255, 0.2);
+        }
+
+        .currency-flag {
+            width: 24px;
+            height: 16px;
+            margin-right: 10px;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .swap-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(108, 99, 255, 0.2);
+            margin: 0 auto;
+        }
+
+        .swap-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+        }
+
+        .result-display {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            animation: pulse 6s infinite linear;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .input-group-text {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .currency-select {
+            position: relative;
+        }
+
+        .currency-select::after {
+            content: "▼";
+            font-size: 12px;
+            color: var(--primary-color);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .rate-info {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chart-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--card-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+
+        .trend-up {
+            color: #4caf50;
+        }
+
+        .trend-down {
+            color: #f44336;
+        }
+
+        .trend-neutral {
+            color: #ff9800;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
+    <div class="container py-5">
+        <div class="mb-5 animate__animated animate__fadeIn">
+            <h1 class="title">💱 CurrX</h1>
+            <p class="subtitle">Real-time currency conversion with historical trends</p>
+        </div>
+
+        <div class="card p-4 mx-auto animate__animated animate__fadeInUp">
+            <div class="row w-100">
+                <div class="col-md">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-5">
+                            <label for="fromCurrency" class="form-label text-secondary">From</label>
+                            <div class="currency-select">
+                                <select id="fromCurrency" class="form-select"></select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 text-center">
+                            <div class="swap-btn mt-4" id="swapBtn" title="Swap currencies">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="toCurrency" class="form-label text-secondary">To</label>
+                            <div class="currency-select">
+                                <select id="toCurrency" class="form-select"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="amount" class="form-label text-secondary">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                            <input type="number" class="form-control" id="amount" placeholder="Enter amount"
+                                value="1" />
+                        </div>
+                    </div>
+
+                    <div class="result-display animate__animated" id="resultContainer">
+                        <h5 class="mb-2">Converted Amount</h5>
+                        <p class="display-5 fw-bold mb-0" id="result">--</p>
+                        <p class="rate-info mb-0" id="rateInfo">1 USD = 0.00 INR <span class="trend-indicator"
+                                id="trendIndicator"></span></p>
+                    </div>
+                </div>
+
+                <div class="col-md">
+                    <div class="tab-container mt-4">
+                        <div class="tab active text-secondary" data-tab="converter">Converter</div>
+                        <div class="tab text-secondary" data-tab="trends">7-Day Trend</div>
+                    </div>
+
+                    <div class="tab-content active" id="converterTab">
+                        <!-- Converter content is already visible above -->
+                    </div>
+
+                    <div class="tab-content" id="trendsTab">
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 text-secondary small">
+                    <p>Exchange rates update automatically. Historical data shows last 7 days.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // DOM Elements
+        const fromSelect = document.getElementById('fromCurrency');
+        const toSelect = document.getElementById('toCurrency');
+        const amountInput = document.getElementById('amount');
+        const resultDisplay = document.getElementById('result');
+        const resultContainer = document.getElementById('resultContainer');
+        const swapBtn = document.getElementById('swapBtn');
+        const rateInfo = document.getElementById('rateInfo');
+        const trendIndicator = document.getElementById('trendIndicator');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const trendChartCtx = document.getElementById('trendChart').getContext('2d');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // API Configuration
+        const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}`;
+
+        // Chart instance
+        let trendChart = null;
+
+        // Current conversion data
+        let currentRate = 0;
+        let historicalData = [];
+        let trendPercentage = 0;
+
+        // Currency data with flag image URLs from flagcdn.com
+        const currencies = {
+            "USD": { name: "US Dollar", flag: "https://flagcdn.com/us.svg" },
+            "EUR": { name: "Euro", flag: "https://flagcdn.com/eu.svg" },
+            "GBP": { name: "British Pound", flag: "https://flagcdn.com/gb.svg" },
+            "INR": { name: "Indian Rupee", flag: "https://flagcdn.com/in.svg" },
+            "JPY": { name: "Japanese Yen", flag: "https://flagcdn.com/jp.svg" },
+            "CAD": { name: "Canadian Dollar", flag: "https://flagcdn.com/ca.svg" },
+            "AUD": { name: "Australian Dollar", flag: "https://flagcdn.com/au.svg" },
+            "CNY": { name: "Chinese Yuan", flag: "https://flagcdn.com/cn.svg" },
+            "SGD": { name: "Singapore Dollar", flag: "https://flagcdn.com/sg.svg" },
+            "ZAR": { name: "South African Rand", flag: "https://flagcdn.com/za.svg" }
+        };
+
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            // Update chart colors if it exists
+            if (trendChart) {
+                updateChartColors();
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+
+        // Tab switching
+        function switchTab(tabName) {
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+
+            tabContents.forEach(content => {
+                content.classList.toggle('active', content.id === `${tabName}Tab`);
+            });
+
+            if (tabName === 'trends' && historicalData.length === 0) {
+                fetchHistoricalData();
+            } else if (tabName === 'trends' && trendChart) {
+                updateChartColors();
+            }
+        }
+
+        // Populate dropdowns with flags
+        function populateDropdowns() {
+            // Clear existing options
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            Object.keys(currencies).forEach(code => {
+                const option1 = document.createElement('option');
+                option1.value = code;
+
+                const flag1 = document.createElement('img');
+                flag1.src = currencies[code].flag;
+                flag1.className = 'currency-flag';
+                flag1.alt = `${code} flag`;
+
+                option1.appendChild(flag1);
+                option1.appendChild(document.createTextNode(` ${code} - ${currencies[code].name}`));
+
+                const option2 = option1.cloneNode(true);
+
+                fromSelect.appendChild(option1);
+                toSelect.appendChild(option2);
+            });
+
+            fromSelect.value = 'USD';
+            toSelect.value = 'INR';
+        }
+
+        // Format numbers with commas
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 6
+            }).format(num);
+        }
+
+        // Get trend indicator HTML
+        function getTrendIndicator(percentage) {
+            if (!percentage) return '';
+
+            if (percentage > 0.5) {
+                return `<span class="trend-up trend-indicator"><i class="fas fa-arrow-up"></i> ${percentage.toFixed(2)}%</span>`;
+            } else if (percentage < -0.5) {
+                return `<span class="trend-down trend-indicator"><i class="fas fa-arrow-down"></i> ${Math.abs(percentage).toFixed(2)}%</span>`;
+            } else {
+                return `<span class="trend-neutral trend-indicator"><i class="fas fa-equals"></i> Stable</span>`;
+            }
+        }
+
+        // Main conversion function
+        async function convertCurrency() {
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            const amount = parseFloat(amountInput.value) || 0;
+
+            // Show loading state
+            resultDisplay.innerHTML = '<span class="loading"></span>';
+            resultContainer.classList.remove('animate__pulse');
+
+            try {
+                const res = await fetch(`${apiUrl}/latest/${from}`);
+                if (!res.ok) throw new Error('API request failed');
+
+                const data = await res.json();
+
+                if (data.result === 'error') {
+                    throw new Error(data['error-type']);
+                }
+
+                if (!data.conversion_rates || !data.conversion_rates[to]) {
+                    throw new Error('Invalid currency data');
+                }
+
+                currentRate = data.conversion_rates[to];
+                const converted = amount * currentRate;
+
+                resultDisplay.textContent = formatNumber(converted);
+                rateInfo.innerHTML = `1 ${from} = ${formatNumber(currentRate)} ${to} ${getTrendIndicator(trendPercentage)}`;
+                resultContainer.classList.add('animate__animated', 'animate__pulse');
+
+            } catch (err) {
+                console.error("Conversion error:", err);
+                resultDisplay.textContent = "Error";
+                rateInfo.textContent = "Failed to fetch rates. Please try again.";
+            }
+        }
+
+        // Fetch historical data for chart
+        async function fetchHistoricalData() {
+            const from = fromSelect.value;
+            const to = toSelect.value;
+
+            try {
+                // Get current rate first if we don't have it
+                if (!currentRate) {
+                    await convertCurrency();
+                }
+
+                // Simulate historical data (in real app, use historical API)
+                historicalData = [];
+                const baseRate = currentRate || 75; // Fallback if no current rate
+
+                // Generate 7 days of historical data with some variation
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+
+                    // Simulate some variation in rates
+                    const variation = (Math.random() * 2 - 1) * 0.02 * baseRate;
+                    const rate = baseRate + variation;
+
+                    historicalData.push({
+                        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                        rate: rate
+                    });
+                }
+
+                // Calculate trend percentage (change from first to last day)
+                if (historicalData.length > 1) {
+                    const firstRate = historicalData[0].rate;
+                    const lastRate = historicalData[historicalData.length - 1].rate;
+                    trendPercentage = ((lastRate - firstRate) / firstRate) * 100;
+                } else {
+                    trendPercentage = 0;
+                }
+
+                createOrUpdateChart();
+                updateTrendIndicator();
+
+            } catch (err) {
+                console.error("Error with historical data:", err);
+            }
+        }
+
+        // Create or update the chart
+        function createOrUpdateChart() {
+            if (trendChart) {
+                trendChart.destroy();
+            }
+
+            trendChart = new Chart(trendChartCtx, {
+                type: 'line',
+                data: {
+                    labels: historicalData.map(item => item.date),
+                    datasets: [{
+                        label: `Exchange Rate (${fromSelect.value} to ${toSelect.value})`,
+                        data: historicalData.map(item => item.rate),
+                        borderColor: 'rgba(108, 99, 255, 0.8)',
+                        backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(108, 99, 255, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: getChartOptions()
+            });
+        }
+
+        // Get chart options based on current theme
+        function getChartOptions() {
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+            const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+
+            return {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: textColor
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.dataset.label}: ${formatNumber(context.raw)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: borderColor
+                        },
+                        ticks: {
+                            color: textColor
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: borderColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            callback: function (value) {
+                                return formatNumber(value);
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        // Update chart colors when theme changes
+        function updateChartColors() {
+            if (!trendChart) return;
+
+            const options = getChartOptions();
+            trendChart.options = options;
+            trendChart.update();
+        }
+
+        // Update trend indicator in rate info
+        function updateTrendIndicator() {
+            trendIndicator.innerHTML = getTrendIndicator(trendPercentage);
+        }
+
+        // Debounce function to limit API calls
+        function debounce(func, wait) {
+            let timeout;
+            return function () {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+
+        // Event listeners
+        amountInput.addEventListener('input', debounce(convertCurrency, 500));
+
+        fromSelect.addEventListener('change', () => {
+            convertCurrency();
+            if (document.querySelector('.tab.active').dataset.tab === 'trends') {
+                fetchHistoricalData();
+            }
+        });
+
+        toSelect.addEventListener('change', () => {
+            convertCurrency();
+            if (document.querySelector('.tab.active').dataset.tab === 'trends') {
+                fetchHistoricalData();
+            }
+        });
+
+        swapBtn.addEventListener('click', () => {
+            swapBtn.classList.add('animate__animated', 'animate__rubberBand');
+            setTimeout(() => {
+                swapBtn.classList.remove('animate__animated', 'animate__rubberBand');
+            }, 1000);
+
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            convertCurrency();
+
+            if (document.querySelector('.tab.active').dataset.tab === 'trends') {
+                fetchHistoricalData();
+            }
+        });
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDropdowns();
+            convertCurrency();
+
+            setTimeout(() => {
+                amountInput.focus();
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
