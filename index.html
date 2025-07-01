@@ -5,6 +5,7 @@
     <!-- Primary Meta Tags -->
     <title>CurrX - Live Currency Converter</title>
     <meta name="title" content="CurrX - Live Currency Converter">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Convert currencies in real-time with live rates, beautiful flags, and auto-typing. Built using Bootstrap and ExchangeRate API.">
 
@@ -33,45 +34,33 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="config.js"></script>
     <style>
-        :root {
-            --primary-color: #6c63ff;
-            --secondary-color: #4d44db;
-            --light-color: #f8f9ff;
-            --text-color: #3a3a3a;
-            --bg-color: #ffffff;
-            --card-color: #ffffff;
-            --input-bg: #f8f9ff;
-            --shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
-            --border-color: #e0e0ff;
-        }
-
-        [data-theme="dark"] {
-            --primary-color: #8a82ff;
-            --secondary-color: #6c63ff;
-            --light-color: #1a1a2e;
-            --text-color: #f0f0f0;
-            --bg-color: #121212;
-            --card-color: #1e1e2e;
-            --input-bg: #2a2a3a;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --border-color: #3a3a4a;
-        }
-
         body {
-            background: var(--bg-color);
+            background: #ffffff;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: var(--text-color);
-            min-height: 100vh;
+            color: #3a3a3a;
+            height: 100%;
             transition: all 0.3s ease;
+            margin: 0;
+            padding: 20px;
+        }
+
+        [data-theme="dark"] body {
+            background: #121212;
+            color: #f0f0f0;
         }
 
         .card {
             border: none;
             border-radius: 16px;
-            box-shadow: var(--shadow);
-            background: var(--card-color);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
+            background: #ffffff;
             overflow: hidden;
             transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .card {
+            background: #1e1e2e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .card:hover {
@@ -91,42 +80,64 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--card-color);
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+            background: #ffffff;
+            color: #6c63ff;
+            border: 2px solid #6c63ff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(108, 99, 255, 0.2);
-            margin: 0 auto;
+            margin: 20px auto;
+        }
+
+        [data-theme="dark"] .swap-btn {
+            background: #1e1e2e;
+            color: #8a82ff;
+            border: 2px solid #8a82ff;
         }
 
         .swap-btn:hover {
-            background: var(--primary-color);
+            background: #6c63ff;
             color: white;
-            transform: rotate(180deg) scale(1.1);
+            transform: rotate wokół(180deg) scale(1.1);
+        }
+
+        [data-theme="dark"] .swap-btn:hover {
+            background: #8a82ff;
         }
 
         .form-control,
         .form-select {
             border-radius: 10px;
             padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
-            color: var(--text-color);
+            border: 1px solid #e0e0ff;
+            background: #f8f9ff;
+            color: #3a3a3a;
             transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            border: 1px solid #3a3a4a;
+            background: #2a2a3a;
+            color: #f0f0f0;
         }
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--primary-color);
+            border-color: #6c63ff;
             box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
         }
 
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            border-color: #8a82ff;
+        }
+
         .result-display {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, #6c63ff 0%, #4d44db 100%);
             color: white;
             padding: 20px;
             border-radius: 12px;
@@ -134,6 +145,10 @@
             margin-top: 20px;
             position: relative;
             overflow: hidden;
+        }
+
+        [data-theme="dark"] .result-display {
+            background: linear-gradient(135deg, #8a82ff 0%, #6c63ff 100%);
         }
 
         .result-display::before {
@@ -158,21 +173,35 @@
         }
 
         .title {
-            color: var(--primary-color);
+            color: #6c63ff;
             font-weight: 700;
             margin-bottom: 5px;
         }
 
+        [data-theme="dark"] .title {
+            color: #8a82ff;
+        }
+
         .subtitle {
-            color: var(--text-color);
+            color: #3a3a3a;
             opacity: 0.7;
             font-size: 0.9rem;
         }
 
+        [data-theme="dark"] .subtitle {
+            color: #f0f0f0;
+        }
+
         .input-group-text {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--primary-color);
+            background: #f8f9ff;
+            border: 1px solid #e0e0ff;
+            color: #6c63ff;
+        }
+
+        [data-theme="dark"] .input-group-text {
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+            color: #8a82ff;
         }
 
         .loading {
@@ -198,12 +227,16 @@
         .currency-select::after {
             content: "▼";
             font-size: 12px;
-            color: var(--primary-color);
+            color: #6c63ff;
             position: absolute;
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
             pointer-events: none;
+        }
+
+        [data-theme="dark"] .currency-select::after {
+            color: #8a82ff;
         }
 
         .rate-info {
@@ -220,16 +253,23 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--card-color);
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+            background: #ffffff;
+            color: #6c63ff;
+            border: 2px solid #6c63ff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
             z-index: 1000;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: #1e1e2e;
+            color: #8a82ff;
+            border: 2px solid #8a82ff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .theme-toggle:hover {
@@ -239,15 +279,24 @@
         .chart-container {
             margin-top: 30px;
             padding: 20px;
-            background: var(--card-color);
+            background: #ffffff;
             border-radius: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.15);
+        }
+
+        [data-theme="dark"] .chart-container {
+            background: #1e1e2e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .tab-container {
             display: flex;
             margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e0e0ff;
+        }
+
+        [data-theme="dark"] .tab-container {
+            border-bottom: 1px solid #3a3a4a;
         }
 
         .tab {
@@ -258,9 +307,14 @@
         }
 
         .tab.active {
-            border-bottom: 3px solid var(--primary-color);
-            color: var(--primary-color);
+            border-bottom: 3px solid #6c63ff;
+            color: #6c63ff;
             font-weight: bold;
+        }
+
+        [data-theme="dark"] .tab.active {
+            border-bottom: 3px solid #8a82ff;
+            color: #8a82ff;
         }
 
         .tab-content {
@@ -292,6 +346,133 @@
 
         ::-webkit-scrollbar {
             display: none;
+        }
+
+        /* Media Queries for Responsive Design */
+
+        /* Tablets and smaller screens (max-width: 768px) */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                border-radius: 12px;
+                margin-bottom: 20px;
+            }
+
+            .swap-btn {
+                width: 40px;
+                height: 40px;
+                margin: 15px auto;
+            }
+
+            .form-control,
+            .form-select {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .result-display {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                top: 15px;
+                right: 15px;
+            }
+
+            .chart-container {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .tab-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Mobile devices (max-width: 576px) */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                border-radius: 10px;
+                margin-bottom: 15px;
+            }
+
+            .swap-btn {
+                width: 35px;
+                height: 35px;
+                margin: 10px auto;
+            }
+
+            .form-control,
+            .form-select {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .currency-flag {
+                width: 20px;
+                height: 14px;
+                margin-right: 8px;
+            }
+
+            .title {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.75rem;
+            }
+
+            .result-display {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+
+            .rate-info {
+                font-size: 0.7rem;
+            }
+
+            .theme-toggle {
+                width: 35px;
+                height: 35px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .chart-container {
+                padding: 10px;
+                margin-top: 15px;
+            }
+
+            .tab {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
